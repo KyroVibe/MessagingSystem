@@ -16,6 +16,7 @@ namespace MessagingSystem {
 
         private List<string> newMessages;
         private List<TcpClient> clients;
+        private List<User> users = new List<User>();
 
         public Host(IPAddress ip, int port) {
             list = new TcpListener(ip, port);
@@ -28,6 +29,23 @@ namespace MessagingSystem {
         }
 
         public void Update() {
+            foreach (TcpClient cli in clients) {
+                string a = Recieve(cli);
+                ProcessRequest(cli, a);
+            }
+        }
+
+        public void ProcessRequest(TcpClient cli, string a) {
+            string[] data = a.Split('|');
+
+            switch (data[0]) {
+                case "reg":
+                    InitUser(cli, data);
+            }
+        }
+
+        public void InitUser(TcpClient cli, string[] data) {
+            User newUser = new User(cli, data[1]);
 
         }
 
@@ -48,6 +66,13 @@ namespace MessagingSystem {
             sw.WriteLine(a);
             sw.Flush();
             sw.Close();
+        }
+
+        public string Recieve(TcpClient a) {
+            StreamReader sr = new StreamReader(a.GetStream());
+            string b = sr.ReadLine();
+            sr.Close();
+            return b;
         }
 
     }
