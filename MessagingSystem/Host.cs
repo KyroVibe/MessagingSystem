@@ -41,12 +41,25 @@ namespace MessagingSystem {
             switch (data[0]) {
                 case "reg":
                     InitUser(cli, data);
+                    break;
+                case "snd":
+                    MessageSend(data[1], data[2], data[3]);
+                    break;
             }
         }
 
         public void InitUser(TcpClient cli, string[] data) {
             User newUser = new User(cli, data[1]);
+            users.Add(newUser);
+        }
 
+        // A shit ton of variables named around "user"
+        public void MessageSend(string sender, string _users, string msg) {
+            string[] users = _users.Split('%');
+            foreach (string user in users) {
+                User u = this.users.Find(x => x.username == user);
+                u.Send("reci|" + sender + "|" + msg);
+            }
         }
 
         public void AcceptClients() {

@@ -32,5 +32,28 @@ namespace MessagingSystem {
             return b;
         }
 
+        public void CustomSend(string msg) {
+            NetworkStream ns = new NetworkStream(client.Client);
+            
+            List<byte> newBuffer = new List<byte>();
+            foreach (char a in msg.ToCharArray()) {
+                byte[] b = BitConverter.GetBytes(a);
+                for (int i = 0; i < b.Length; i++) {
+                    newBuffer.Add(b[i]);
+                }
+            }
+            byte[] buffer = newBuffer.ToArray();
+            Int16 len = (Int16)buffer.Length;
+
+            sw.Write();
+
+            sw.Flush();
+            sw.Close();
+        }
+
+        public byte[] CustomRecieve() {
+
+        }
+
     }
 }
